@@ -37,7 +37,7 @@ function App() {
 
 
           <div className="grow flex justify-end items-end pr-20 pb-20">
-            <Rubiks className=" w-[300px] h-[300px]"></Rubiks>
+            <Rubiks className=" w-[400px] h-[400px]"></Rubiks>
           </div>
 
           </Section>
@@ -45,27 +45,7 @@ function App() {
 
 
           <Section>
-          <div className="font-cedarville-cursive text-blue  lg:text-9xl md:text-6xl  text-5xl">
-            Abinadi Swapp
-          </div>
-
-          <div className=" text-blue  lg:text-6xl md:text-3xl text-2xl">
-            <Typewriter
-              words={['Software Engineer', 'Gamer', 'Workout Fanatic']} cursor 
-              typeSpeed={120}
-              deleteSpeed={120}
-              loop={true}
-            />
-          </div>
-
-          <div className=" text-blue  lg:text-4xl md:text-3xl text-xl w-full whitespace-normal text-ellipsis mt-1">
-            Bringing excellence to whatever the fruck I do.
-          </div>
-
-
-          <div className="w-full ">
-            <Rubiks className=" w-[200px] h-[200px]"></Rubiks>
-          </div>
+            <h1 className=" mt-10 text-blue">Section 2</h1>
 
           </Section>
           

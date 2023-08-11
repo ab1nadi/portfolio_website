@@ -4,7 +4,7 @@ import {useThree, Canvas, useFrame, useLoader} from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { MeshBasicMaterial } from "three";
 import {getSide, rotateSide} from '../../../lib/rubiks/rotating3dArray'
-
+import { ReactThreeFiber } from "@react-three/fiber";
 
 export default function Rubiks(props)
 {
@@ -69,7 +69,9 @@ function RubiksCube(props)
 
                     dataArray[y][z].push
                     (
-                        <mesh key={x.toString() + y.toString() + z.toString()} position={[x-props.w/2+props.s/2, y-props.w/2+props.s/2, z-props.w/2+props.s/2]}>
+
+                        
+                        <mesh key={x.toString() +" "+ y.toString()+ " " + z.toString()} position={[x-props.w/2+props.s/2, y-props.w/2+props.s/2, z-props.w/2+props.s/2]}>
                             <boxGeometry args={[props.s,props.s,props.s]} />
                             <meshBasicMaterial attach="material-0" map={x==props.w-1 ? yellow : black}  />  
                             <meshBasicMaterial attach="material-1" map={x==0 ? blue : black}  />            
@@ -102,6 +104,8 @@ function RubiksCube(props)
         let pin = rotGroup.current;
         switch(side)
         {
+
+            // ROTATE X
             case 0:
             case 1:
                 {
@@ -117,12 +121,14 @@ function RubiksCube(props)
                     };
                 }
             break;
+            // ROTATE Y
             case 2:
             case 3:
                 {   
+
                     if(c.target == null)
-                        c.target = pin.rotation.z + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
-                    
+                    c.target = pin.rotation.z + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
+                
                     pin.rotation.z+= speed* (direction==1 ? d : -1*d);
 
                     if((direction==1 && pin.rotation.z >= c.target) || (direction==0 && pin.rotation.z<= c.target))
@@ -130,13 +136,15 @@ function RubiksCube(props)
                         pin.rotation.z=c.target;
                         return true;
                     };
+
                 }
             break;
+            // ROTATE Z
             case 4:
             case 5:
                 {
                     if(c.target == null)
-                        c.target = pin.rotation.y + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
+                    c.target = pin.rotation.y + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
 
                     pin.rotation.y+= speed* (direction==1 ? d : -1*d);
 
@@ -178,12 +186,17 @@ function RubiksCube(props)
                 // be added to a group and rotated
                 let s = getSide(dataArray,side);
 
-                console.log(side);
-                
-                setRotSquares(s.side);
-                setSquares(s.other);
+
+                console.log(rotGroup.current)
+                console.log("side:", side);
+
+                rotGroup.current.add(s.side);
+
+                console.log("first", dataArray)
 
                 rotateSide(dataArray, side, direction)
+
+                console.log("second", dataArray);
 
 
                 // do the animation 
@@ -224,15 +237,12 @@ function RubiksCube(props)
             runShuffleAnimation(d);
     })
 
-   useEffect(()=>
-   {
-   })
+
 
     return (
         <group ref={boxRef} position={props.position} onClick={()=> setShuffleAnimation(true)}>
                 {squares}
             <group ref={rotGroup}>
-                {rotSquares}
             </group>
         </group>
     )

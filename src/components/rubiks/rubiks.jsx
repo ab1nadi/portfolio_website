@@ -27,7 +27,7 @@ export default function Rubiks(props)
 
 let dataArray = [];
 let shuffleStack = []; // holds {side:int, direction:int}
-let n_shuffles = 3;
+let n_shuffles = 2;
 let animation_State = "START";
 let speed = 0.9;
 
@@ -218,7 +218,7 @@ function RubiksCube(props)
             case 5:
                 {
                     if(c.target == null)
-                    c.target = pin.rotation.z + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
+                        c.target = pin.rotation.z + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
 
                     pin.rotation.z += props.shuffleSpeed* (direction==1 ? d : -1*d);
 
@@ -263,15 +263,16 @@ function RubiksCube(props)
                
 
                 // create a step for the stack
-                let side =   Math.floor(Math.random() *6);
-                let direction = Math.floor(Math.random() *2);
-                shuffleStack.push({side:side, direction: direction, targetRot:null});
+                let side =  0 //Math.floor(Math.random() *6);
+                let direction = 0 + shuffleStack.length > 0 ? 1 : 0; //Math.floor(Math.random() *2);
+                shuffleStack.push({side:side, direction: direction, target:null});
+
+
 
                 // select the elements from the data array so that they can
                 // be added to a group and rotated
                 let s = getSide(dataArray,side);
                 s.forEach(mesh => rotGroup.attach(mesh));
-                rotGroup.children.forEach(mesh=> console.log(mesh.p))
                 rotateSide(dataArray, side, direction)
 
         
@@ -295,12 +296,17 @@ function RubiksCube(props)
                     animation_State = "DONE"
                     return;
                 }
+
+                console.log(JSON.stringify(shuffleStack));
+
                 
                 let stackFront = shuffleStack[shuffleStack.length-1];
                 stackFront.target=null;
-                
+                stackFront.direction = stackFront.direction==1 ? 0 : 1;
+
+
                 let side = stackFront.side;
-                let direction = !Boolean(stackFront.direction);
+                let direction = stackFront.direction;
 
                 // select the elements from the data array so that they can
                 // be added to a group and rotated

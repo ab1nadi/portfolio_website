@@ -2,7 +2,7 @@ import { useEffect, useRef, useState} from "react";
 import React from 'react'
 import {useThree, Canvas, useFrame, useLoader} from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
-import { MeshBasicMaterial } from "three";
+import { MeshBasicMaterial, BoxGeometry, Mesh, Quaternion, Group } from "three";
 import {getSide, rotateSide} from '../../../lib/rubiks/rotating3dArray'
 import { ReactThreeFiber } from "@react-three/fiber";
 
@@ -27,22 +27,23 @@ export default function Rubiks(props)
 
 let dataArray = [];
 let shuffleStack = []; // holds {side:string, direction:string}
-let n_shuffles = 13;
+let n_shuffles = 2;
 let animation_State = "START";
 let speed = 0.9;
+
+
+let rotGroup = null;
 
 function RubiksCube(props)
 {
 
     const boxRef = React.useRef(null);
-    const rotGroup = React.useRef(null);
 
     const [active, setActive] = useState(false);
     const [shuffleAnimation, setShuffleAnimation] = useState(false);
 
     const state = useThree();
     const [squares, setSquares] = useState([]);
-    const [rotSquares, setRotSquares] = useState([]);
 
     const green = useLoader(TextureLoader, 'green.png');
     const black = useLoader(TextureLoader, 'black.png');
@@ -56,41 +57,101 @@ function RubiksCube(props)
     //array[y][z][x]
     
 
+
     useEffect(()=>{
-        for(let y = 0; y<props.w; y++)
+
+
+        // create the data array the size we want
+        for(let y=0; y<props.w; y++)
         {
             dataArray.push([]);
-            for(let z = 0; z<props.w; z++)
+            for(let z=0; z<props.w; z++)
             {
-
                 dataArray[y].push([]);
-                for(let x = 0; x<props.w; x++)
+                for(let x=0; x<props.w; x++)
+                {
+                    dataArray[y][z].push(0);
+                }
+            }
+        }
+        
+        
+
+        for(let x = 0; x<props.w; x++)
+        {
+            for(let y = 0; y<props.w; y++)
+            {
+                for(let z = 0; z<props.w; z++)
                 {
 
-                    dataArray[y][z].push
-                    (
+                    // create the geometry and materials
+                    const geometry = new BoxGeometry(props.s, props.s, props.s);
+                    const cubeMaterials = [
+                        new MeshBasicMaterial({ map: x==props.w-1 ? yellow : black}), //right side
+                        new MeshBasicMaterial({ map: x==0 ? blue : black}), //left side
+                        new MeshBasicMaterial({ map: y==0 ? white : black}), //top side
+                        new MeshBasicMaterial({ map: y==props.w-1? orange : black}), //bottom side
+                        new MeshBasicMaterial({ map: z==props.w-1 ? green : black}), //front side
+                        new MeshBasicMaterial({ map: z==0 ? red : black}), //back side
+                    ];
 
-                        
-                        <mesh key={x.toString() +" "+ y.toString()+ " " + z.toString()} position={[x-props.w/2+props.s/2, y-props.w/2+props.s/2, z-props.w/2+props.s/2]}>
-                            <boxGeometry args={[props.s,props.s,props.s]} />
-                            <meshBasicMaterial attach="material-0" map={x==props.w-1 ? yellow : black}  />  
-                            <meshBasicMaterial attach="material-1" map={x==0 ? blue : black}  />            
-                            <meshBasicMaterial attach="material-2" map={y==props.w-1 ? white : black}  />   
-                            <meshBasicMaterial attach="material-3" map={y==0 ? orange : black}  />          
-                            <meshBasicMaterial attach="material-4" map={z==props.w-1 ? green : black}  />  
-                            <meshBasicMaterial attach="material-5" map={z==0 ? red : black}  />            
-                        </mesh>
-                    )
+                    // create the cube mesh
+                    let cube = new Mesh(geometry, cubeMaterials);
 
+
+                    cube.p=[y,z,x];
+                    
+
+                    cube.position.x=x-props.w/2+props.s/2;
+                    cube.position.y=-y+props.w/2-props.s/2;
+                    cube.position.z=z-props.w/2+props.s/2;
+
+                    // put it in the array
+                    dataArray[y][z][x] = cube;
                 }
 
             }
 
         }
 
-
-        setSquares(dataArray.flat())
+        setSquares(dataArray.flat(3))
     }, []);
+
+
+    function print()
+    {
+        let string = "";
+
+        string += '[\n';
+        dataArray.forEach(y=>{
+            string += '\t[\n';
+            y.forEach(x=>
+                {
+                    string += '\t\t[ '
+                    x.forEach(e=>
+                        {
+                            string += JSON.stringify(e.p)+ " ";
+                        })
+                    string += '], \n '
+                })
+            string += '\n\t],\n';
+        })
+
+        string += ']';
+
+        console.log(string);
+    }
+
+    // saveRotations
+    // saves the rotations
+    // of the rotated group
+    function saveRotations()
+    {
+        rotGroup.children.forEach((mesh)=>
+        {
+            boxRef.current.attach(mesh);
+        })
+    }
 
     // rotate
     // rotates a side of the rubiks
@@ -101,58 +162,66 @@ function RubiksCube(props)
     {
         let side = c.side
         let direction = c.direction;
-        let pin = rotGroup.current;
+        let pin = rotGroup;
         switch(side)
         {
 
-            // ROTATE X
+            // ROTATE left/right
             case 0:
             case 1:
                 {
                     if(c.target == null)
-                        c.target = pin.rotation.x + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
+                        c.target = pin.rotation.x + (direction ? Math.PI/2 : -1*Math.PI/2);
 
-                    pin.rotation.x+= speed* (direction==1 ? d : -1*d);
+                    pin.rotation.x+= speed* (direction ? d : -1*d);
+
+                    
 
                     if((direction==1 && pin.rotation.x >= c.target) || (direction==0 && pin.rotation.x<= c.target))
                     {   
                         pin.rotation.x=c.target;
+                        saveRotations();
                         return true;
-                    };
+                    } 
+                 
                 }
             break;
-            // ROTATE Y
+            // ROTATE top/bottom
             case 2:
             case 3:
                 {   
 
                     if(c.target == null)
-                    c.target = pin.rotation.z + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
-                
-                    pin.rotation.z+= speed* (direction==1 ? d : -1*d);
-
-                    if((direction==1 && pin.rotation.z >= c.target) || (direction==0 && pin.rotation.z<= c.target))
-                    {   
-                        pin.rotation.z=c.target;
-                        return true;
-                    };
-
-                }
-            break;
-            // ROTATE Z
-            case 4:
-            case 5:
-                {
-                    if(c.target == null)
                     c.target = pin.rotation.y + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
-
+                
                     pin.rotation.y+= speed* (direction==1 ? d : -1*d);
 
                     if((direction==1 && pin.rotation.y >= c.target) || (direction==0 && pin.rotation.y<= c.target))
                     {   
                         pin.rotation.y=c.target;
+                        saveRotations();
                         return true;
-                    };
+                    }
+
+
+                }
+            break;
+            // ROTATE front/back
+            case 4:
+            case 5:
+                {
+                    if(c.target == null)
+                    c.target = pin.rotation.z + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
+
+                    pin.rotation.z += speed* (direction==1 ? d : -1*d);
+
+                    if((direction==1 && pin.rotation.z >= c.target) || (direction==0 && pin.rotation.z<= c.target))
+                    {   
+                        pin.rotation.z=c.target;
+                        saveRotations();
+                        return true;
+                    }
+
                 }
             break;
         }
@@ -177,6 +246,12 @@ function RubiksCube(props)
                     return;
                 }
 
+                if(rotGroup != null)
+                    boxRef.current.remove(rotGroup);
+
+                rotGroup = new Group();
+                boxRef.current.add(rotGroup);
+
                 // create a step for the stack
                 let side = Math.floor(Math.random()*6);
                 let direction = Math.floor(Math.random()*2);
@@ -184,20 +259,24 @@ function RubiksCube(props)
 
                 // select the elements from the data array so that they can
                 // be added to a group and rotated
+
+
+
+
+                print();
+
                 let s = getSide(dataArray,side);
 
-
-                console.log(rotGroup.current)
-                console.log("side:", side);
-
-                rotGroup.current.add(s.side);
-
-                console.log("first", dataArray)
+                console.log("side", side);
+                console.log("direction", direction)
 
                 rotateSide(dataArray, side, direction)
 
-                console.log("second", dataArray);
+                s.side.forEach(mesh=> rotGroup.attach(mesh))
+                
 
+
+                print();
 
                 // do the animation 
                 animation_State="FORWARD_ANIMATION";
@@ -240,10 +319,8 @@ function RubiksCube(props)
 
 
     return (
-        <group ref={boxRef} position={props.position} onClick={()=> setShuffleAnimation(true)}>
-                {squares}
-            <group ref={rotGroup}>
-            </group>
+        <group ref={boxRef}  position={props.position} onClick={()=> setShuffleAnimation(true)}>
+                {squares.map((i,k)=><primitive key={k} object={i} />)}
         </group>
     )
 }

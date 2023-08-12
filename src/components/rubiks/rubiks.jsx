@@ -16,7 +16,7 @@ export default function Rubiks(props)
     <div className={props.className}>
         <Canvas>
             <pointLight position={[10, 10, 10]} />
-            <RubiksCube w={3} s={1} position = {[0,0,0]}></RubiksCube>
+            <RubiksCube rotationSpeed={0.3} shuffleSpeed={1} w={3} s={1} position = {[0,0,0]}></RubiksCube>
         </Canvas>
     </div>
     );
@@ -26,11 +26,10 @@ export default function Rubiks(props)
 
 
 let dataArray = [];
-let shuffleStack = []; // holds {side:string, direction:string}
-let n_shuffles = 2;
+let shuffleStack = []; // holds {side:int, direction:int}
+let n_shuffles = 3;
 let animation_State = "START";
 let speed = 0.9;
-
 
 let rotGroup = null;
 
@@ -91,8 +90,8 @@ function RubiksCube(props)
                         new MeshBasicMaterial({ map: x==0 ? blue : black}), //left side
                         new MeshBasicMaterial({ map: y==0 ? white : black}), //top side
                         new MeshBasicMaterial({ map: y==props.w-1? orange : black}), //bottom side
-                        new MeshBasicMaterial({ map: z==props.w-1 ? green : black}), //front side
-                        new MeshBasicMaterial({ map: z==0 ? red : black}), //back side
+                        new MeshBasicMaterial({ map: z==0? green : black}), //front side
+                        new MeshBasicMaterial({ map: z==props.w-1 ? red : black}), //back side
                     ];
 
                     // create the cube mesh
@@ -104,7 +103,7 @@ function RubiksCube(props)
 
                     cube.position.x=x-props.w/2+props.s/2;
                     cube.position.y=-y+props.w/2-props.s/2;
-                    cube.position.z=z-props.w/2+props.s/2;
+                    cube.position.z=-z+props.w/2-props.s/2;
 
                     // put it in the array
                     dataArray[y][z][x] = cube;
@@ -114,7 +113,10 @@ function RubiksCube(props)
 
         }
 
-        setSquares(dataArray.flat(3))
+        boxRef.current.add(...dataArray.flat(3))
+
+        boxRef.current.rotation.x=0.8;
+        boxRef.current.rotation.y=0.8;
     }, []);
 
 
@@ -147,10 +149,13 @@ function RubiksCube(props)
     // of the rotated group
     function saveRotations()
     {
-        rotGroup.children.forEach((mesh)=>
+        let chil = [...rotGroup.children]
+		chil.forEach(mesh => 
         {
-            boxRef.current.attach(mesh);
+			boxRef.current.attach(mesh);
+			rotGroup.remove(mesh);
         })
+
     }
 
     // rotate
@@ -173,13 +178,14 @@ function RubiksCube(props)
                     if(c.target == null)
                         c.target = pin.rotation.x + (direction ? Math.PI/2 : -1*Math.PI/2);
 
-                    pin.rotation.x+= speed* (direction ? d : -1*d);
+                    pin.rotation.x+= props.shuffleSpeed* (direction ? d : -1*d);
 
-                    
+
 
                     if((direction==1 && pin.rotation.x >= c.target) || (direction==0 && pin.rotation.x<= c.target))
                     {   
                         pin.rotation.x=c.target;
+
                         saveRotations();
                         return true;
                     } 
@@ -194,11 +200,12 @@ function RubiksCube(props)
                     if(c.target == null)
                     c.target = pin.rotation.y + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
                 
-                    pin.rotation.y+= speed* (direction==1 ? d : -1*d);
+                    pin.rotation.y+= props.shuffleSpeed* (direction==1 ? d : -1*d);
 
                     if((direction==1 && pin.rotation.y >= c.target) || (direction==0 && pin.rotation.y<= c.target))
                     {   
                         pin.rotation.y=c.target;
+
                         saveRotations();
                         return true;
                     }
@@ -213,7 +220,7 @@ function RubiksCube(props)
                     if(c.target == null)
                     c.target = pin.rotation.z + (direction==1 ? Math.PI/2 : -1*Math.PI/2);
 
-                    pin.rotation.z += speed* (direction==1 ? d : -1*d);
+                    pin.rotation.z += props.shuffleSpeed* (direction==1 ? d : -1*d);
 
                     if((direction==1 && pin.rotation.z >= c.target) || (direction==0 && pin.rotation.z<= c.target))
                     {   
@@ -252,32 +259,22 @@ function RubiksCube(props)
                 rotGroup = new Group();
                 boxRef.current.add(rotGroup);
 
+
+               
+
                 // create a step for the stack
-                let side = Math.floor(Math.random()*6);
-                let direction = Math.floor(Math.random()*2);
+                let side =   Math.floor(Math.random() *6);
+                let direction = Math.floor(Math.random() *2);
                 shuffleStack.push({side:side, direction: direction, targetRot:null});
 
                 // select the elements from the data array so that they can
                 // be added to a group and rotated
-
-
-
-
-                print();
-
                 let s = getSide(dataArray,side);
-
-                console.log("side", side);
-                console.log("direction", direction)
-
+                s.forEach(mesh => rotGroup.attach(mesh));
+                rotGroup.children.forEach(mesh=> console.log(mesh.p))
                 rotateSide(dataArray, side, direction)
 
-                s.side.forEach(mesh=> rotGroup.attach(mesh))
-                
-
-
-                print();
-
+        
                 // do the animation 
                 animation_State="FORWARD_ANIMATION";
 
@@ -292,26 +289,52 @@ function RubiksCube(props)
             break;
             case "BACKWARD":
             {
+
+                if(shuffleStack.length == 0)
+                {
+                    animation_State = "DONE"
+                    return;
+                }
                 
+                let stackFront = shuffleStack[shuffleStack.length-1];
+                stackFront.target=null;
+                
+                let side = stackFront.side;
+                let direction = !Boolean(stackFront.direction);
+
+                // select the elements from the data array so that they can
+                // be added to a group and rotated
+                let s = getSide(dataArray,side);
+                s.forEach(mesh => rotGroup.attach(mesh));
+                rotateSide(dataArray, side, direction)
+
+
+                // do the animation 
+                animation_State="BACKWARD_ANIMATION";
+
             }
             break;
             case "BACKWARD_ANIMATION":
             {
-                
+                let c = shuffleStack.pop();
+                if(rotate(c, d))
+                    animation_State = "BACKWARD";
             }
             break;
             case "DONE":
             {
-
+                setShuffleAnimation(false);
             }
             break;
         }
     }
 
     useFrame(({}, d)=> {
-        boxRef.current.rotation.x += d*0.3;
-        boxRef.current.rotation.y += d*0.3;
-        
+
+        boxRef.current.rotation.x+=  d * props.rotationSpeed;
+        boxRef.current.rotation.y+= d * props.rotationSpeed;
+
+
         if(shuffleAnimation)
             runShuffleAnimation(d);
     })
@@ -319,8 +342,8 @@ function RubiksCube(props)
 
 
     return (
-        <group ref={boxRef}  position={props.position} onClick={()=> setShuffleAnimation(true)}>
-                {squares.map((i,k)=><primitive key={k} object={i} />)}
+        <group ref={boxRef}  dispose={null} position={props.position} onClick={()=> setShuffleAnimation(true)}>
+               
         </group>
     )
 }

@@ -2,9 +2,8 @@ import { useEffect, useRef, useState} from "react";
 import React from 'react'
 import {useThree, Canvas, useFrame, useLoader} from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
-import { MeshBasicMaterial, BoxGeometry, Mesh, Quaternion, Group } from "three";
-import {getSide, rotateSide} from '../../../lib/rubiks/rotating3dArray'
-import { ReactThreeFiber } from "@react-three/fiber";
+import { MeshBasicMaterial, BoxGeometry, Mesh , Group } from "three";
+import {getSide, rotateSide, test} from '../../../lib/rubiks/rotating3dArray'
 
 export default function Rubiks(props)
 {
@@ -14,9 +13,11 @@ export default function Rubiks(props)
     })
     return(
     <div className={props.className}>
+
+        <div onClick={()=>test()}>click me</div>
         <Canvas>
             <pointLight position={[10, 10, 10]} />
-            <RubiksCube rotationSpeed={0.3} shuffleSpeed={1} w={3} s={1} position = {[0,0,0]}></RubiksCube>
+            <RubiksCube rotationSpeed={0.3} shuffleSpeed={1.8} w={3} s={1} position = {[0,0,0]}></RubiksCube>
         </Canvas>
     </div>
     );
@@ -27,9 +28,11 @@ export default function Rubiks(props)
 
 let dataArray = [];
 let shuffleStack = []; // holds {side:int, direction:int}
-let n_shuffles = 2;
+let n_shuffles = 4;
 let animation_State = "START";
 let speed = 0.9;
+
+let debugStack = [{"side":3,"direction":0,"target":-1.5707963267948966},{"side":3,"direction":0,"target":-1.5707963267948966}, {"side":1, "direction":0,"target":1.5707963267948966}, {"side":1,"direction":1,"target":-1.5707963267948966}];
 
 let rotGroup = null;
 
@@ -93,7 +96,6 @@ function RubiksCube(props)
                         new MeshBasicMaterial({ map: z==0? green : black}), //front side
                         new MeshBasicMaterial({ map: z==props.w-1 ? red : black}), //back side
                     ];
-
                     // create the cube mesh
                     let cube = new Mesh(geometry, cubeMaterials);
 
@@ -153,7 +155,7 @@ function RubiksCube(props)
 		chil.forEach(mesh => 
         {
 			boxRef.current.attach(mesh);
-			rotGroup.remove(mesh);
+            rotGroup.remove(mesh);
         })
 
     }
@@ -250,6 +252,7 @@ function RubiksCube(props)
                 if(shuffleStack.length == n_shuffles)
                 {
                     animation_State = "BACKWARD";
+                    console.log("before", JSON.stringify(shuffleStack))
                     return;
                 }
 
@@ -263,8 +266,8 @@ function RubiksCube(props)
                
 
                 // create a step for the stack
-                let side =  0 //Math.floor(Math.random() *6);
-                let direction = 0 + shuffleStack.length > 0 ? 1 : 0; //Math.floor(Math.random() *2);
+                let side =   debugStack[shuffleStack.length].side;
+                let direction = debugStack[shuffleStack.length].direction;
                 shuffleStack.push({side:side, direction: direction, target:null});
 
 
@@ -297,7 +300,8 @@ function RubiksCube(props)
                     return;
                 }
 
-                console.log(JSON.stringify(shuffleStack));
+
+
 
                 
                 let stackFront = shuffleStack[shuffleStack.length-1];
@@ -314,6 +318,8 @@ function RubiksCube(props)
                 s.forEach(mesh => rotGroup.attach(mesh));
                 rotateSide(dataArray, side, direction)
 
+                console.log("after", JSON.stringify(shuffleStack))
+
 
                 // do the animation 
                 animation_State="BACKWARD_ANIMATION";
@@ -322,14 +328,16 @@ function RubiksCube(props)
             break;
             case "BACKWARD_ANIMATION":
             {
-                let c = shuffleStack.pop();
+                let c = shuffleStack[shuffleStack.length-1]
                 if(rotate(c, d))
+                {
                     animation_State = "BACKWARD";
+                    shuffleStack.pop();
+                }
             }
             break;
             case "DONE":
             {
-                setShuffleAnimation(false);
             }
             break;
         }
@@ -348,7 +356,7 @@ function RubiksCube(props)
 
 
     return (
-        <group ref={boxRef}  dispose={null} position={props.position} onClick={()=> setShuffleAnimation(true)}>
+        <group ref={boxRef}  dispose={null} position={props.position} >
                
         </group>
     )

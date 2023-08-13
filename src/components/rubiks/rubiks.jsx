@@ -3,7 +3,7 @@ import React from 'react'
 import {useThree, Canvas, useFrame, useLoader} from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { MeshBasicMaterial, BoxGeometry, Mesh , Group } from "three";
-import {getSide, rotateSide, test} from '../../../lib/rubiks/rotating3dArray'
+import {getSide, rotateSide} from '../../../lib/rubiks/rotating3dArray'
 
 export default function Rubiks(props)
 {
@@ -14,10 +14,11 @@ export default function Rubiks(props)
     return(
     <div className={props.className}>
 
-        <div onClick={()=>test()}>click me</div>
+
         <Canvas>
             <pointLight position={[10, 10, 10]} />
-            <RubiksCube rotationSpeed={0.3} shuffleSpeed={1.8} w={3} s={1} position = {[0,0,0]}></RubiksCube>
+            <RubiksCube rotationSpeed={0.3} shuffleSpeed={2} w={3} s={1} position = {[0,0,0]}></RubiksCube>
+            
         </Canvas>
     </div>
     );
@@ -26,26 +27,23 @@ export default function Rubiks(props)
 
 
 
-let dataArray = [];
-let shuffleStack = []; // holds {side:int, direction:int}
-let n_shuffles = 4;
-let animation_State = "START";
-let speed = 0.9;
-
-let debugStack = [{"side":3,"direction":0,"target":-1.5707963267948966},{"side":3,"direction":0,"target":-1.5707963267948966}, {"side":1, "direction":0,"target":1.5707963267948966}, {"side":1,"direction":1,"target":-1.5707963267948966}];
-
-let rotGroup = null;
 
 function RubiksCube(props)
 {
 
-    const boxRef = React.useRef(null);
+    // some global state
+// unfortunately this means i can only spawn one at a time
+// I wonder if I can put these inside the function
+    let dataArray = useRef([]);
+    let shuffleStack = useRef([]); // holds {side:int, direction:int}
+    let n_shuffles = useRef(24);
+    let animation_State = useRef("START");
+    let rotGroup = useRef(null);
 
+    const boxRef = React.useRef(null);
     const [active, setActive] = useState(false);
     const [shuffleAnimation, setShuffleAnimation] = useState(false);
-
-    const state = useThree();
-    const [squares, setSquares] = useState([]);
+    const threeState = useThree();
 
     const green = useLoader(TextureLoader, 'green.png');
     const black = useLoader(TextureLoader, 'black.png');
@@ -56,43 +54,26 @@ function RubiksCube(props)
     const yellow = useLoader(TextureLoader, 'yellow.png');
 
 
-    //array[y][z][x]
-    
-
-
+    // sets up the rubiks cube
+    // and puts it in a group
     useEffect(()=>{
 
-
-        // create the data array the size we want
-        for(let y=0; y<props.w; y++)
+        for(let y = 0; y<props.w; y++)
         {
-            dataArray.push([]);
-            for(let z=0; z<props.w; z++)
+            dataArray.current.push([]);
+            for(let z = 0; z<props.w; z++)
             {
-                dataArray[y].push([]);
-                for(let x=0; x<props.w; x++)
+                dataArray.current[y].push([])
+                for(let x = 0; x<props.w; x++)
                 {
-                    dataArray[y][z].push(0);
-                }
-            }
-        }
-        
-        
-
-        for(let x = 0; x<props.w; x++)
-        {
-            for(let y = 0; y<props.w; y++)
-            {
-                for(let z = 0; z<props.w; z++)
-                {
-
+                    
                     // create the geometry and materials
                     const geometry = new BoxGeometry(props.s, props.s, props.s);
                     const cubeMaterials = [
-                        new MeshBasicMaterial({ map: x==props.w-1 ? yellow : black}), //right side
+                        new MeshBasicMaterial({ map: x==props.w-1 ? orange : black}), //right side
                         new MeshBasicMaterial({ map: x==0 ? blue : black}), //left side
                         new MeshBasicMaterial({ map: y==0 ? white : black}), //top side
-                        new MeshBasicMaterial({ map: y==props.w-1? orange : black}), //bottom side
+                        new MeshBasicMaterial({ map: y==props.w-1? yellow : black}), //bottom side
                         new MeshBasicMaterial({ map: z==0? green : black}), //front side
                         new MeshBasicMaterial({ map: z==props.w-1 ? red : black}), //back side
                     ];
@@ -108,54 +89,30 @@ function RubiksCube(props)
                     cube.position.z=-z+props.w/2-props.s/2;
 
                     // put it in the array
-                    dataArray[y][z][x] = cube;
+
+                    dataArray.current[y][z].push(cube);
                 }
 
             }
 
         }
 
-        boxRef.current.add(...dataArray.flat(3))
+        boxRef.current.add(...dataArray.current.flat(3))
 
         boxRef.current.rotation.x=0.8;
         boxRef.current.rotation.y=0.8;
     }, []);
-
-
-    function print()
-    {
-        let string = "";
-
-        string += '[\n';
-        dataArray.forEach(y=>{
-            string += '\t[\n';
-            y.forEach(x=>
-                {
-                    string += '\t\t[ '
-                    x.forEach(e=>
-                        {
-                            string += JSON.stringify(e.p)+ " ";
-                        })
-                    string += '], \n '
-                })
-            string += '\n\t],\n';
-        })
-
-        string += ']';
-
-        console.log(string);
-    }
 
     // saveRotations
     // saves the rotations
     // of the rotated group
     function saveRotations()
     {
-        let chil = [...rotGroup.children]
+        let chil = [...rotGroup.current.children]
 		chil.forEach(mesh => 
         {
 			boxRef.current.attach(mesh);
-            rotGroup.remove(mesh);
+            rotGroup.current.remove(mesh);
         })
 
     }
@@ -169,7 +126,7 @@ function RubiksCube(props)
     {
         let side = c.side
         let direction = c.direction;
-        let pin = rotGroup;
+        let pin = rotGroup.current;
         switch(side)
         {
 
@@ -178,13 +135,13 @@ function RubiksCube(props)
             case 1:
                 {
                     if(c.target == null)
-                        c.target = pin.rotation.x + (direction ? Math.PI/2 : -1*Math.PI/2);
+                        c.target = pin.rotation.x + (direction==0 ? Math.PI/2 : -1*Math.PI/2);
 
-                    pin.rotation.x+= props.shuffleSpeed* (direction ? d : -1*d);
+                    pin.rotation.x+= props.shuffleSpeed* (direction==0 ? d : -1*d);
 
 
 
-                    if((direction==1 && pin.rotation.x >= c.target) || (direction==0 && pin.rotation.x<= c.target))
+                    if((direction==0 && pin.rotation.x >= c.target) || (direction==1 && pin.rotation.x<= c.target))
                     {   
                         pin.rotation.x=c.target;
 
@@ -238,126 +195,150 @@ function RubiksCube(props)
         return false;
     }
 
+    // runShuffleAnimation
+    // basically a state machine
+    // that animates the rubiks cube so
+    // that it shuffles and unshuffles
     function runShuffleAnimation(d)
     {
-        switch(animation_State)
+        switch(animation_State.current)
         {
             case "START":
             {
-                animation_State = "FORWARD"
+                animation_State.current = "FORWARD"
             }
             break;
             case "FORWARD": 
             {
-                if(shuffleStack.length == n_shuffles)
+                if(shuffleStack.current.length == n_shuffles.current)
                 {
-                    animation_State = "BACKWARD";
-                    console.log("before", JSON.stringify(shuffleStack))
+                    animation_State.current = "BACKWARD";
                     return;
                 }
 
-                if(rotGroup != null)
-                    boxRef.current.remove(rotGroup);
+                if(rotGroup.current != null)
+                    boxRef.current.remove(rotGroup.current);
 
-                rotGroup = new Group();
-                boxRef.current.add(rotGroup);
+                rotGroup.current = new Group();
+                boxRef.current.add(rotGroup.current);
 
 
                
 
                 // create a step for the stack
-                let side =   debugStack[shuffleStack.length].side;
-                let direction = debugStack[shuffleStack.length].direction;
-                shuffleStack.push({side:side, direction: direction, target:null});
+                let side =  Math.floor(Math.random()*6) //debugStack[shuffleStack.current.length].side;
+                let direction = Math.floor(Math.random()*2) //debugStack[shuffleStack.current.length].direction;
+                shuffleStack.current.push({side:side, direction: direction, target:null});
 
 
 
                 // select the elements from the data array so that they can
                 // be added to a group and rotated
-                let s = getSide(dataArray,side);
-                s.forEach(mesh => rotGroup.attach(mesh));
-                rotateSide(dataArray, side, direction)
+                let s = getSide(dataArray.current,side);
+                s.forEach(mesh => rotGroup.current.attach(mesh));
+                rotateSide(dataArray.current, side, direction)
 
         
                 // do the animation 
-                animation_State="FORWARD_ANIMATION";
+                animation_State.current="FORWARD_ANIMATION";
 
             }
             break;
             case "FORWARD_ANIMATION": 
             {
-                let c = shuffleStack[shuffleStack.length-1];
+                let c = shuffleStack.current[shuffleStack.current.length-1];
                 if(rotate(c, d))
-                    animation_State = "FORWARD";
+                    animation_State.current = "FORWARD";
             }
             break;
             case "BACKWARD":
             {
 
-                if(shuffleStack.length == 0)
+                if(shuffleStack.current.length == 0)
                 {
-                    animation_State = "DONE"
+                    animation_State.current = "DONE"
                     return;
                 }
 
+                if(rotGroup.current != null)
+                    boxRef.current.remove(rotGroup.current);
+
+                rotGroup.current = new Group();
+                boxRef.current.add(rotGroup.current);
 
 
+                // get the top of the stack 
+                let top = shuffleStack.current[shuffleStack.current.length-1];
 
+                // update it so that the animation goes backwards
+                top.direction = !top.direction;
+                top.target = null;
                 
-                let stackFront = shuffleStack[shuffleStack.length-1];
-                stackFront.target=null;
-                stackFront.direction = stackFront.direction==1 ? 0 : 1;
-
-
-                let side = stackFront.side;
-                let direction = stackFront.direction;
 
                 // select the elements from the data array so that they can
                 // be added to a group and rotated
-                let s = getSide(dataArray,side);
-                s.forEach(mesh => rotGroup.attach(mesh));
-                rotateSide(dataArray, side, direction)
+                let s = getSide(dataArray.current,top.side);
+                s.forEach(mesh => rotGroup.current.attach(mesh));
+                rotateSide(dataArray.current, top.side, top.direction)
 
-                console.log("after", JSON.stringify(shuffleStack))
-
-
+                
                 // do the animation 
-                animation_State="BACKWARD_ANIMATION";
+                animation_State.current="BACKWARD_ANIMATION";
 
             }
             break;
             case "BACKWARD_ANIMATION":
             {
-                let c = shuffleStack[shuffleStack.length-1]
+                let c = shuffleStack.current[shuffleStack.current.length-1]
                 if(rotate(c, d))
                 {
-                    animation_State = "BACKWARD";
-                    shuffleStack.pop();
+                    animation_State.current = "BACKWARD";
+                    shuffleStack.current.pop();
                 }
             }
             break;
             case "DONE":
             {
+                // set it to false
+                // so it can be started again if we want
+                setShuffleAnimation(faslse);
             }
             break;
         }
     }
 
-    useFrame(({}, d)=> {
+    // updates the rubiks cube everyframe
+    useFrame(({clock}, d)=> {
 
-        boxRef.current.rotation.x+=  d * props.rotationSpeed;
-        boxRef.current.rotation.y+= d * props.rotationSpeed;
+        if(active)
+        {
+            boxRef.current.rotation.x += -threeState.mouse.y/10;
+            boxRef.current.rotation.y += threeState.mouse.x/10;
+            
+        }
+        else 
+        {
+           
+            boxRef.current.rotation.x+=  d * props.rotationSpeed;
+            boxRef.current.rotation.y+= d * props.rotationSpeed;
+        }
+
 
 
         if(shuffleAnimation)
             runShuffleAnimation(d);
     })
 
-
+    // sets a timeout so that the rubiks cube
+    // shuffles after 2 seconds
+    useEffect(()=>{
+        setTimeout(() => {
+            setShuffleAnimation(true);
+        }, 2000);
+    },[])
 
     return (
-        <group ref={boxRef}  dispose={null} position={props.position} >
-               
+        <group ref={boxRef}  dispose={null} position={props.position} onClick={()=>setActive(!active)}>
         </group>
     )
 }

@@ -301,7 +301,7 @@ function RubiksCube(props)
             {
                 // set it to false
                 // so it can be started again if we want
-                setShuffleAnimation(faslse);
+                setShuffleAnimation(false);
             }
             break;
         }

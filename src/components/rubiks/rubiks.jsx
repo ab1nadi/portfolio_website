@@ -4,21 +4,23 @@ import {useThree, Canvas, useFrame, useLoader} from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { MeshBasicMaterial, BoxGeometry, Mesh , Group } from "three";
 import {getSide, rotateSide} from '../../../lib/rubiks/rotating3dArray'
-
+import random from "random";
 export default function Rubiks(props)
 {
-    useEffect(()=>
+    let [fadeIn, setFadeIn] = useState(false);
+
+    function loaded()
     {
-        console.log(props);
-    })
+        console.log("loaded")
+    }
+
     return(
-    <div className={props.className}>
+    <div className={props.className +  ` transition-opacity ease-in duration-700  ${fadeIn ? "opacity-100" : "opacity-0"}`}>
 
 
         <Canvas>
             <pointLight position={[10, 10, 10]} />
-            <RubiksCube rotationSpeed={0.3} shuffleSpeed={2} w={3} s={1} position = {[0,0,0]}></RubiksCube>
-            
+            <RubiksCube startBounds={props.startBounds} onLoad={()=>setFadeIn(true)} rotationSpeed={0.3} shuffleSpeed={2} w={3} s={1} position = {[0,0,0]}></RubiksCube> 
         </Canvas>
     </div>
     );
@@ -39,6 +41,7 @@ function RubiksCube(props)
     let n_shuffles = useRef(24);
     let animation_State = useRef("START");
     let rotGroup = useRef(null);
+    let hasLoaded = useRef(false);
 
     const boxRef = React.useRef(null);
     const [active, setActive] = useState(false);
@@ -98,9 +101,9 @@ function RubiksCube(props)
         }
 
         boxRef.current.add(...dataArray.current.flat(3))
-
         boxRef.current.rotation.x=0.8;
-        boxRef.current.rotation.y=0.8;
+        boxRef.current.rotation.y=0.8; 
+     
     }, []);
 
     // saveRotations
@@ -226,8 +229,8 @@ function RubiksCube(props)
                
 
                 // create a step for the stack
-                let side =  Math.floor(Math.random()*6) //debugStack[shuffleStack.current.length].side;
-                let direction = Math.floor(Math.random()*2) //debugStack[shuffleStack.current.length].direction;
+                let side =  random.int(0,5); //Math.floor(Math.random()*6) //debugStack[shuffleStack.current.length].side;
+                let direction = random.int(0,1) //Math.floor(Math.random()*2) //debugStack[shuffleStack.current.length].direction;
                 shuffleStack.current.push({side:side, direction: direction, target:null});
 
 
@@ -310,6 +313,18 @@ function RubiksCube(props)
     // updates the rubiks cube everyframe
     useFrame(({clock}, d)=> {
 
+        if(hasLoaded.current == false)
+        {
+            if(props.onLoad)
+                props.onLoad();
+
+            setTimeout(() => {
+                setShuffleAnimation(true);
+            }, random.int(props.startBounds.lower,props.startBounds.upper));
+
+            hasLoaded.current = true;
+        }
+
         if(active)
         {
             boxRef.current.rotation.x += -threeState.mouse.y/10;
@@ -329,16 +344,10 @@ function RubiksCube(props)
             runShuffleAnimation(d);
     })
 
-    // sets a timeout so that the rubiks cube
-    // shuffles after 2 seconds
-    useEffect(()=>{
-        setTimeout(() => {
-            setShuffleAnimation(true);
-        }, 2000);
-    },[])
+
 
     return (
-        <group ref={boxRef}  dispose={null} position={props.position} onClick={()=>setActive(!active)}>
+        <group ref={boxRef}  position={props.position} onClick={()=>setActive(!active)}>
         </group>
     )
 }

@@ -3,6 +3,7 @@ import Rubiks from './components/rubiks/rubiks';
 import { Typewriter } from 'react-simple-typewriter'
 import Section from './components/sections/section';
 import { useRef } from 'react';
+import Nav from './components/nav/nav';
 function App() {
 
   const home = useRef(0);
@@ -16,25 +17,13 @@ function App() {
     <>
       <div className="w-full h-screen bg-gradient-to-r from-black  to-[#4A516D]  flex">
 
-        <div className=" w-80 md:relative fixed  md:left-0 -left-80  h-full bg-green p-8">
-          <div className="w-full h-28 flex justify-center items-center">
-          <Rubiks className=" w-[100px] h-[100px]"></Rubiks>
-          </div>
-          <hr className="my-12 h-1 rounded-sm border-t-0  bg-blue opacity-100 " />
-          <div className="flex flex-col gap-4">
-            <button onClick={()=>skills.current.scrollIntoView({behavior: 'smooth'})} className='w-full text-left text-2xl bold '>Skills</button>
-            <button onClick={()=>projects.current.scrollIntoView({behavior: 'smooth'})} className='w-full text-left text-2xl bold '>projects</button>
-            <button onClick={()=>certificates.current.scrollIntoView({behavior: 'smooth'})} className='w-full text-left text-2xl bold '>certificates</button>
-            <button onClick={()=>demos.current.scrollIntoView({behavior: 'smooth'})} className='w-full text-left text-2xl bold '>demos</button>
-            <button onClick={()=>contactMe.current.scrollIntoView({behavior: 'smooth'})} className='w-full text-left text-2xl bold '>contactMe</button>
-          </div>
-          
-        </div>
-
+        <Nav buttons={[{text:"Home", ref:home}, {text:"Skills", ref:skills}, {text:"Projects", ref:projects}, {text:"Certifications", ref:certificates}, {text:"Demos", ref:demos}, {text:"Contact Me", ref:contactMe}]}/>
+        
+        
         <div className="snap-y snap-mandatory w-full h-screen overflow-x-hidden pl-16 pr-16  text-clip white whitespace-nowrap	flex flex-col gap-3">
           
           <Section innerRef={home}>
-          <div className="font-cedarville-cursive text-blue  lg:text-9xl md:text-6xl  text-5xl mt-16">
+          <div className="font-cedarville-cursive text-blue  lg:text-9xl md:text-6xl  text-5xl mt-16  ">
             Abinadi Swapp
           </div>
 
@@ -52,8 +41,8 @@ function App() {
           </div>
 
 
-          <div className="grow flex justify-end items-end pr-20 pb-20">
-            <Rubiks className=" w-[400px] h-[400px]"></Rubiks>
+          <div className="grow flex md:justify-end justify-center items-end md:pr-20 pb-20">
+            <Rubiks startBounds={{lower:1000, upper:10000}} className=" w-[400px] h-[400px]"></Rubiks>
           </div>
 
           </Section>

@@ -16,6 +16,7 @@
     "random": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-markdown": "^8.0.7",
     "react-simple-typewriter": "^5.0.1",
     "react-transition-group": "^4.4.5",
     "three": "^0.154.0",

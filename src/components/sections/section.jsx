@@ -1,7 +1,10 @@
+import Header from "./conponents/header"
+
 export default function Section(props)
 {
     return (
-        <div ref={props.innerRef} className="snap-start flex-none min-h-[500px] h-screen  grow w-full  flex flex-col p-16">
+        <div ref={props.innerRef} className="flex-none w-full h-fit flex flex-col md:p-16 p-4 pb-0">
+            <Header>{props.header}</Header>
             {props.children}
         </div>
     )

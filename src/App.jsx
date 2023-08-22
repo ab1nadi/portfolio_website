@@ -3,21 +3,20 @@ import { useRef } from 'react';
 
 // components
 import Nav from './components/nav/nav';
-import Section from './components/sections/section';
 
 // sections
 import Home from './components/sections/home/home';
-import SkillsAndCerts from './components/sections/skillsCertifcations/skillsCertifications';
-import Projects from './components/sections/projects/projects';
-import Demos from './components/sections/demos/demos';
+import Skills from './components/sections/skills/skills';
+import Certifications from './components/sections/certifications/certifications';
+import Projects from './components/sections/Projects/projects';
 import ContactMe from './components/sections/contactMe/contactMe';
 
 function App() {
 
   const home = useRef(0);
-  const skillsCerts = useRef(0);
+  const skills = useRef(0);
+  const certs = useRef(0);
   const projects = useRef(0);
-  const demos = useRef(0);
   const contactMe = useRef(0);
 
 
@@ -25,29 +24,19 @@ function App() {
     <>
       <div className="w-full h-screen bg-gradient-to-r from-black  to-[#4A516D]  flex">
 
-        <Nav buttons={[{text:"Home", ref:home}, {text:"Skills & Certs", ref:skillsCerts}, {text:"Projects", ref:projects}, {text:"Demos", ref:demos}, {text:"Contact Me", ref:contactMe}]}/>
+        <Nav buttons={[{text:"Home", ref:home}, {text:"Skills", ref:skills}, {text:"Certificaions", ref:certs}, {text:"Projects", ref:projects},  {text:"Contact Me", ref:contactMe}]}/>
         
-        <div className="snap-y snap-mandatory w-full h-screen overflow-x-hidden text-clip white whitespace-nowrap	flex flex-col gap-3">
+        <div className="w-full h-screen overflow-x-hidden text-clip white whitespace-nowrap	flex flex-col gap-3">
           
-          <Section innerRef={home}>
-            <Home/>
-          </Section>
+          <Home innerRef={home}/>
 
-          <Section innerRef={skillsCerts}>
-            <SkillsAndCerts/>
-          </Section>
+          <Skills innerRef={skills}/>
 
-          <Section innerRef={projects}>
-            <Projects/>
-          </Section>
+          <Certifications innerRef={certs}/>
 
-          <Section innerRef={demos}>
-            <Demos/>
-          </Section>
+          <Projects innerRef={projects}/>
 
-          <Section innerRef={contactMe}>
-            <ContactMe/>
-          </Section>
+          <ContactMe innerRef={contactMe}/>
 
         </div>
       </div>

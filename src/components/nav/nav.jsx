@@ -18,17 +18,17 @@ export default function Nav(props)
             <CSSTransition
                             in={showNav}
                             nodeRef={navRef}
-                            timeout={500}
+                            timeout={0}
                             classNames={{
-                                enter: '-translate-x-80',
+                                enter: '-translate-x-64',
                                 enterActive: 'translate-x-0',
-                                exit: '-translate-x-80',
+                                exit: '-translate-x-64',
                             }}
                             unmountOnExit
                             onEnter={() => {}}
                             onExited={() => {}}
                             >
-                <div ref={navRef} className="transition-all duration-300 -translate-x-80 ease-out  w-80 overflow-hidden fixed  md:hidden block z-40   h-full bg-green ">
+                <div ref={navRef} className="transition-all delay-0 duration-200 -translate-x-64 ease-out  w-64 overflow-hidden fixed  md:hidden block z-40   h-full bg-green ">
                     <div className="w-full h-28 flex justify-center items-center">
                     <Rubiks startBounds={{lower:1000, upper:10000}} className=" w-[100px] h-[100px]"></Rubiks>
                     </div>

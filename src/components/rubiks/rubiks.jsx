@@ -15,7 +15,7 @@ export default function Rubiks(props)
     }
 
     return(
-    <div className={props.className +  ` transition-opacity ease-in duration-700  ${fadeIn ? "opacity-100" : "opacity-0"}`}>
+    <div className={props.className +  ` transition-opacity ease-in duration-200  ${fadeIn ? "opacity-100" : "opacity-0"}`}>
 
 
         <Canvas>

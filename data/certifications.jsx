@@ -21,7 +21,7 @@ const certifications = [
         title: "Sterling Scholar Winner for Computer it",
         date: "2016",
         skill: "Leadership, community service, and academics",
-        url: "https://www.credly.com/badges/4513541f-bdae-481b-a47d-e6029438189e/public_url"
+        url: "https://www.nshcounseling.org/sterling-scholar"
     },
 
     

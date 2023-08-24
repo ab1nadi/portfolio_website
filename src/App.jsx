@@ -1,5 +1,5 @@
 import './App.css'
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // components
 import Nav from './components/nav/nav';
@@ -11,6 +11,8 @@ import Certifications from './components/sections/certifications/certifications'
 import Projects from './components/sections/Projects/projects';
 import ContactMe from './components/sections/contactMe/contactMe';
 
+// data
+
 function App() {
 
   const home = useRef(0);
@@ -18,6 +20,7 @@ function App() {
   const certs = useRef(0);
   const projects = useRef(0);
   const contactMe = useRef(0);
+
 
 
   return (

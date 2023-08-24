@@ -4,6 +4,9 @@ import { CSSTransition } from "react-transition-group"
 import { Squash as Hamburger } from 'hamburger-react'
 import { useRef, useState } from "react"
 
+import { SocialIcon } from 'react-social-icons';
+
+
 export default function Nav(props)
 {
     const navRef = useRef(null);
@@ -28,7 +31,7 @@ export default function Nav(props)
                             onEnter={() => {}}
                             onExited={() => {}}
                             >
-                <div ref={navRef} className="transition-all delay-0 duration-200 -translate-x-64 ease-out  w-64 overflow-hidden fixed  md:hidden block z-40   h-full bg-green ">
+                <div ref={navRef} className="transition-all delay-0 duration-200 -translate-x-64 ease-out  w-64 overflow-hidden fixed  md:hidden flex flex-col z-40   h-full bg-green ">
                     <div className="w-full h-28 flex justify-center items-center">
                     <Rubiks startBounds={{lower:1000, upper:10000}} className=" w-[100px] h-[100px]"></Rubiks>
                     </div>
@@ -43,7 +46,17 @@ export default function Nav(props)
                                 })}
                             </div>
 
+                    </div>
+
+                    <div className="w-full h-full flex items-end pb-3">
+                        <div className="w-full flex justify-center gap-6 mt-6">
+                   
+                            <SocialIcon fgColor="#FFFF" url="mailto:abinadiswapp@gmail.com" />
+                            <SocialIcon fgColor="#FFFF" url="https://www.linkedin.com/in/aswapp-0104ab1b7" />
+                            <SocialIcon fgColor="#FFFF" url="https://github.com/ab1nadi" />
+              
                         </div>
+                    </div>
 
                 </div>
 
@@ -53,7 +66,7 @@ export default function Nav(props)
                 <Hamburger toggled={showNav} toggle={setShowNav} color={"#48ACF0"} size={40}/>
             </div>
 
-            <div ref={navRef} className=" w-80 md:block hidden h-full bg-green ">
+            <div ref={navRef} className=" w-80 md:flex flex-col hidden h-full bg-green ">
                     <div className="w-full h-28 flex justify-center items-center">
                     <Rubiks startBounds={{lower:1000, upper:10000}} className=" w-[100px] h-[100px]"></Rubiks>
                     </div>
@@ -67,8 +80,16 @@ export default function Nav(props)
                                 })}
                             </div>
 
+                    </div>
+                    <div className="w-full h-full flex items-end pb-3">
+                        <div className="w-full flex justify-center gap-6 mt-6">
+                   
+                            <SocialIcon fgColor="#FFFF" url="mailto:abinadiswapp@gmail.com" />
+                            <SocialIcon fgColor="#FFFF" url="https://www.linkedin.com/in/aswapp-0104ab1b7" />
+                            <SocialIcon fgColor="#FFFF" url="https://github.com/ab1nadi" />
+              
                         </div>
-
+                    </div>
             </div>
         </>
     )

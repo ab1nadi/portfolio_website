@@ -47,8 +47,9 @@ export default function Home(props)
                 <div className=" text-blue text-xl w-full whitespace-normal mt-4 italic ">
                     {quote ? `"${quote}"` : ""}
                 </div>
-                <div className=" text-blue text-xl w-full whitespace-normal mt-1 italic ">
+                <div className=" text-blue text-xl w-full whitespace-normal mt-1 italic">
                     {author ? `-${author}` : ""}
+                    {author ? <button onClick={fetchQuote} title="Load another" className="ml-2 hover:text-gray-600">&#10227;</button> : ""}
                 </div>
             </div>
 

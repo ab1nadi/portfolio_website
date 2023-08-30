@@ -1,12 +1,17 @@
 import { Typewriter } from "react-simple-typewriter"
 import { useEffect,useState } from "react"
 import Rubiks from "../../rubiks/rubiks"
+
+import { isBrowser } from "react-device-detect";
+
 export default function Home(props)
 {
 
     const [quote, setQuote] = useState("");
     const [author, setAuthor] = useState("");
     const [fadeIn, setFadeIn] = useState(false);
+
+    const [hover, setHover] = useState("");
   
 
     let fetchQuote = async()=> 
@@ -24,7 +29,10 @@ export default function Home(props)
   
     useEffect(()=>
     {
-        fetchQuote();     
+        fetchQuote();
+        
+        if(isBrowser)
+            setHover("hover:text-gray-600")
     },[])
 
 
@@ -49,7 +57,7 @@ export default function Home(props)
                 </div>
                 <div className=" text-blue text-xl w-full whitespace-normal mt-1 italic">
                     {author ? `-${author}` : ""}
-                    {author ? <button onClick={fetchQuote} title="Load another" className="ml-2 hover:text-gray-600">&#10227;</button> : ""}
+                    {author ? <button onClick={fetchQuote} title="Load another" className={`ml-2 ${hover}`}>&#10227;</button> : ""}
                 </div>
             </div>
 

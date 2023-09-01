@@ -7,18 +7,28 @@ export default function Home(props)
     const [quote, setQuote] = useState("");
     const [author, setAuthor] = useState("");
     const [fadeIn, setFadeIn] = useState(false);
+    const [rotateFetchQuote, setRotateFetchQuote] = useState("animate-spin");
   
 
     let fetchQuote = async()=> 
     {
-        const response = await fetch("https://api.themotivate365.com/stoic-quote");
-        const result = await response.json();
+        setRotateFetchQuote("animate-spin");
 
-        console.log(result);
+        try{
+            const response = await fetch("https://api.themotivate365.com/stoic-quote");
+            const result = await response.json();
+            setQuote(result.quote);
+            setAuthor(result.author);
+            setFadeIn(true);
+
+            setRotateFetchQuote("");
+        } catch(err)
+        {
+            console.log("couldn't fetch stoic quote. :/ bummer");
+        }
+
             
-        setQuote(result.quote);
-        setAuthor(result.author);
-        setFadeIn(true);
+
 
     }
   
@@ -42,6 +52,7 @@ export default function Home(props)
                     loop={true}/>
             </div>
 
+            {!fadeIn ? <div className={`text-3xl text-blue h-fit w-fit origin-[50%_60%] animate-spin`}>↻</div> : ""}
 
             <div className={` transition-opacity ease-in duration-200  ${fadeIn ? "opacity-100" : "opacity-0"}`}>
                 <div className=" text-blue text-xl w-full whitespace-normal mt-4 italic ">
@@ -49,6 +60,7 @@ export default function Home(props)
                 </div>
                 <div className=" text-blue text-xl w-full whitespace-normal mt-1 italic ">
                     {author ? `-${author}` : ""}
+                    <button onClick={fetchQuote} className={`text-3xl text-blue ml-3 h-fit w-fit origin-[50%_60%] ${rotateFetchQuote}`}>↻</button>
                 </div>
             </div>
 
@@ -57,4 +69,4 @@ export default function Home(props)
             </div>
         </div>
     )
-}
+} 

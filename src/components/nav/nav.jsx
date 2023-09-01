@@ -4,9 +4,7 @@ import { CSSTransition } from "react-transition-group"
 import { Squash as Hamburger } from 'hamburger-react'
 import { useRef, useState } from "react"
 
-import { SocialIcon } from 'react-social-icons';
-
-
+import SocialMedia from "../socialMediaComp/socialMedia"
 export default function Nav(props)
 {
     const navRef = useRef(null);
@@ -49,13 +47,7 @@ export default function Nav(props)
                     </div>
 
                     <div className="w-full h-full flex items-end pb-3">
-                        <div className="w-full flex justify-center gap-6 mt-6">
-                   
-                            <SocialIcon fgColor="#FFFF" url="mailto:abinadiswapp@gmail.com" />
-                            <SocialIcon fgColor="#FFFF" url="https://www.linkedin.com/in/aswapp-0104ab1b7" />
-                            <SocialIcon fgColor="#FFFF" url="https://github.com/ab1nadi" />
-              
-                        </div>
+                        <SocialMedia/>
                     </div>
 
                 </div>
@@ -82,13 +74,7 @@ export default function Nav(props)
 
                     </div>
                     <div className="w-full h-full flex items-end pb-3">
-                        <div className="w-full flex justify-center gap-6 mt-6">
-                   
-                            <SocialIcon fgColor="#FFFF" url="mailto:abinadiswapp@gmail.com" />
-                            <SocialIcon fgColor="#FFFF" url="https://www.linkedin.com/in/aswapp-0104ab1b7" />
-                            <SocialIcon fgColor="#FFFF" url="https://github.com/ab1nadi" />
-              
-                        </div>
+                        <SocialMedia/>
                     </div>
             </div>
         </>

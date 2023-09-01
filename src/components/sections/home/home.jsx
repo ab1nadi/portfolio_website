@@ -1,6 +1,9 @@
 import { Typewriter } from "react-simple-typewriter"
 import { useEffect,useState } from "react"
 import Rubiks from "../../rubiks/rubiks"
+
+
+
 export default function Home(props)
 {
 
@@ -24,11 +27,10 @@ export default function Home(props)
             setRotateFetchQuote("");
         } catch(err)
         {
-            console.log("couldn't fetch stoic quote. :/ bummer");
+            setQuote("Couldn't feth a stoic quote :/");
+            setFadeIn(true);
+            setRotateFetchQuote("");
         }
-
-            
-
 
     }
   
@@ -52,7 +54,7 @@ export default function Home(props)
                     loop={true}/>
             </div>
 
-            {!fadeIn ? <div className={`text-3xl text-blue h-fit w-fit origin-[50%_60%] animate-spin`}>↻</div> : ""}
+            {!fadeIn ? <div className={`text-3xl text-blue h-fit w-fit origin-[50%_60%] animate-spin mt-4 `}>↻</div> : ""}
 
             <div className={` transition-opacity ease-in duration-200  ${fadeIn ? "opacity-100" : "opacity-0"}`}>
                 <div className=" text-blue text-xl w-full whitespace-normal mt-4 italic ">

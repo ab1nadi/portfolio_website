@@ -3,7 +3,6 @@ import { useEffect,useState } from "react"
 import Rubiks from "../../rubiks/rubiks"
 
 
-
 export default function Home(props)
 {
 
@@ -36,7 +35,10 @@ export default function Home(props)
   
     useEffect(()=>
     {
-        fetchQuote();     
+        fetchQuote();
+        
+        if(isBrowser)
+            setHover("hover:text-gray-600")
     },[])
 
 
@@ -60,7 +62,7 @@ export default function Home(props)
                 <div className=" text-blue text-xl w-full whitespace-normal mt-4 italic ">
                     {quote ? `"${quote}"` : ""}
                 </div>
-                <div className=" text-blue text-xl w-full whitespace-normal mt-1 italic ">
+                <div className=" text-blue text-xl w-full whitespace-normal mt-1 italic">
                     {author ? `-${author}` : ""}
                     <button onClick={fetchQuote} className={`text-3xl text-blue ml-3 h-fit w-fit origin-[50%_60%] ${rotateFetchQuote}`}>↻</button>
                 </div>

@@ -37,8 +37,7 @@ export default function Home(props)
     {
         fetchQuote();
         
-        if(isBrowser)
-            setHover("hover:text-gray-600")
+
     },[])
 
 

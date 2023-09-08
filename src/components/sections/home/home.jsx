@@ -36,8 +36,6 @@ export default function Home(props)
     useEffect(()=>
     {
         fetchQuote();
-        
-
     },[])
 
 

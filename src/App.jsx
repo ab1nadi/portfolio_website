@@ -1,8 +1,6 @@
 import './App.css'
 import { useEffect, useRef, useState } from 'react';
 
-import countapi from 'countapi-js';
-
 
 // components
 import Nav from './components/nav/nav';
@@ -28,11 +26,31 @@ function App() {
   const contactMe = useRef(0);
 
 
-  useEffect(()=>
+  // fetchVisits
+  // a little function that
+  // fetches the website hit count
+  // uses api-ninjas
+  let fetchVisits = async () =>
   {
-    countapi.visits().then((result) => {
-      setVisits(result);
+    const response = await fetch('https://api.api-ninjas.com/v1/counter?id=portfolio_hit&hit=true', {
+      method: "GET",
+      headers: {
+        'X-Api-Key': 'ppTzbzAwLnjQ8Cq/pexpKQ==jtfnh9YxxGVoQtWv',
+      },
+      contentType: 'application/json',
     });
+
+    return response.json()
+  }
+
+
+  useEffect( ()=>
+  {
+
+    fetchVisits().then((d)=>{
+      setVisits(d.value)
+    }).catch(e=> setVisits(0));
+    
   }, []);
 
 

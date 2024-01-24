@@ -17,7 +17,7 @@ export default function Home(props)
         setRotateFetchQuote("animate-spin");
 
         try{
-            const response = await fetch("https://api.themotivate365.com/stoic-quote");
+            const response = await fetch("https://stoic.tekloon.net/stoic-quote");
             const result = await response.json();
             setQuote(result.quote);
             setAuthor(result.author);

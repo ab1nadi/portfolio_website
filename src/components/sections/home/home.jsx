@@ -2,7 +2,6 @@ import { Typewriter } from "react-simple-typewriter"
 import { useEffect,useState } from "react"
 import Rubiks from "../../rubiks/rubiks"
 
-import { isBrowser } from "react-device-detect";
 
 export default function Home(props)
 {
@@ -10,8 +9,7 @@ export default function Home(props)
     const [quote, setQuote] = useState("");
     const [author, setAuthor] = useState("");
     const [fadeIn, setFadeIn] = useState(false);
-
-    const [hover, setHover] = useState("");
+    const [rotateFetchQuote, setRotateFetchQuote] = useState("animate-spin");
   
 
     let fetchQuote = async()=> 
@@ -23,14 +21,19 @@ export default function Home(props)
         setAuthor(result.author);
         setFadeIn(true);
 
+            setRotateFetchQuote("");
+        } catch(err)
+        {
+            setQuote("Couldn't feth a stoic quote :/");
+            setFadeIn(true);
+            setRotateFetchQuote("");
+        }
+
     }
   
     useEffect(()=>
     {
         fetchQuote();
-        
-        if(isBrowser)
-            setHover("hover:text-gray-600")
     },[])
 
 
@@ -53,4 +56,4 @@ export default function Home(props)
             </div>
         </div>
     )
-}
+} 

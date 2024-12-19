@@ -1,5 +1,5 @@
 import Header from "../conponents/header";
-import { SocialIcon } from 'react-social-icons';
+import SocialMedia from "../../socialMediaComp/socialMedia";
 
 export default function ContactMe(props)
 {
@@ -8,20 +8,18 @@ export default function ContactMe(props)
             <Header>Contact Me</Header>
             <div className="w-full flex flex-col gap-6">
                 <div className='w-full flex flex-col items-center border-b-4 border-blue gap-3'>
-                    <img className="w-56 rounded-full" src="./me.jpg"></img>
-                    <div className="text-6xl text-blue">Abinadi Swapp</div>
+                    <img className="md:w-56 w-48 rounded-full" src="./me.jpg"></img>
+                    <div className="md:text-6xl text-4xl text-blue">Abinadi Swapp</div>
                 </div>
 
                 <div className="w-full flex justify-center gap-6">
                     <div className="text-white text-2xl">abinadiswapp@gmail.com</div>
                 </div>
 
-                <div className="w-full flex justify-center  mb-20">
-                   
-                        <SocialIcon fgColor="#FFFF" url="mailto:abinadiswapp@gmail.com" />
-                        <SocialIcon fgColor="#FFFF" url="https://www.linkedin.com/in/aswapp-0104ab1b7" />
-                        <SocialIcon fgColor="#FFFF" url="https://github.com/ab1nadi" />
-                </div>
+                <SocialMedia/>
+
+
+                <div className="h-20"></div>
             </div>
         </div>
     )

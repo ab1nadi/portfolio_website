@@ -16,10 +16,8 @@ export default function Home(props)
 
     let fetchQuote = async()=> 
     {
-        const response = await fetch("https://api.themotivate365.com/stoic-quote");
+        const response = await fetch("https://stoic.tekloon.net/stoic-quote");
         const result = await response.json();
-
-        console.log(result);
             
         setQuote(result.quote);
         setAuthor(result.author);
@@ -48,17 +46,6 @@ export default function Home(props)
                     typeSpeed={120}
                     deleteSpeed={120}
                     loop={true}/>
-            </div>
-
-
-            <div className={` transition-opacity ease-in duration-200  ${fadeIn ? "opacity-100" : "opacity-0"}`}>
-                <div className=" text-blue text-xl w-full whitespace-normal mt-4 italic ">
-                    {quote ? `"${quote}"` : ""}
-                </div>
-                <div className=" text-blue text-xl w-full whitespace-normal mt-1 italic">
-                    {author ? `-${author}` : ""}
-                    {author ? <button onClick={fetchQuote} title="Load another" className={`ml-2 ${hover}`}>&#10227;</button> : ""}
-                </div>
             </div>
 
             <div className=" flex md:justify-end justify-center md:items-end items-center  w-full h-full md:pr-20 md:pb-32">

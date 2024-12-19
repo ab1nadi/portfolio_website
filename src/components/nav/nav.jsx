@@ -78,7 +78,7 @@ export default function Nav(props)
 
                     </div>
                     <div className="w-full h-full flex flex-col justify-end pb-3">
-                        <div className="w-full text-xl bold text-black pl-8">{props.visits}</div>
+                        
                         <SocialMedia/>
                     </div>
             </div>

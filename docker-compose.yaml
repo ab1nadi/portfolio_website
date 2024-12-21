@@ -1,0 +1,52 @@
+# a docker for running strapi in a production environment
+services:
+  swag:
+    image: lscr.io/linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Denver
+      - URL=randomdomain-url-etc.online
+      - SUBDOMAINS=www,
+      - VALIDATION=http
+    volumes:
+      - ./swag/config:/config
+    ports:
+      - 443:443
+      - 80:80 #optional
+    restart: unless-stopped
+
+  strapi:
+    container_name: strapi
+    build: .
+    image: strapi:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_CLIENT: ${DATABASE_CLIENT}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      APP_KEYS: ${APP_KEYS}
+      NODE_ENV: ${NODE_ENV}
+    volumes:
+      - strapi:/opt/app/config
+      - strapi:/opt/app/src
+      - strapi:/opt/package.json
+      - strapi:/opt/yarn.lock
+      - strapi:/opt/app/public/uploads
+      - strapi:/opt/app/.tmp
+      - ./.env:/opt/app/.env
+    command: ${START_COMMAND}
+    ports:
+      - "1337:1337"
+
+volumes:
+  strapi:  # Define the volume

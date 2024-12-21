@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "certifications",
+  "info": {
+    "singularName": "certification",
+    "pluralName": "certifications",
+    "displayName": "Certification",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "credit_url": {
+      "type": "string"
+    },
+    "skills": {
+      "type": "json"
+    },
+    "date": {
+      "type": "date"
+    },
+    "current_job": {
+      "type": "boolean"
+    }
+  }
+}

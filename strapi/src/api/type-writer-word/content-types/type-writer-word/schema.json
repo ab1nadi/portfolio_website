@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "type_writer_words",
+  "info": {
+    "singularName": "type-writer-word",
+    "pluralName": "type-writer-words",
+    "displayName": "Type Writer Word"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "word": {
+      "type": "string"
+    }
+  }
+}

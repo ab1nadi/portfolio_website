@@ -1,6 +1,5 @@
 # Portfolio Website
-This repository contains my website's source code, built with React.js and Tailwind CSS. It is an online portfolio showcasing my work, skills, and achievements.
-It is running on GitHub pages at https://ab1nadi.github.io/portfolio_website/.
+A new version of my portfolio website that leverages strapi as a backend so I can dynamically update content on the frontend.
 
 ## Features
 * **Responsive Design:** The website is optimized to work across different devices and screen sizes, ensuring a seamless user experience.

@@ -1,5 +1,6 @@
 # Portfolio Website
-A new version of my portfolio website that leverages strapi as a backend so I can dynamically update content on the frontend.
+A new version of my portfolio website that leverages strapi as a backend so I can dynamically update content on the frontend. 
+The website is hosted on Github pages: https://ab1nadi.github.io/portfolio_website/
 
 ## Features
 * **Responsive Design:** The website is optimized to work across different devices and screen sizes, ensuring a seamless user experience.

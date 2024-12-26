@@ -4,6 +4,7 @@ import { CSSTransition } from "react-transition-group"
 import { Squash as Hamburger } from 'hamburger-react'
 import { useRef, useState} from "react"
 
+import VisitCount from "../visitCount"
 import SocialMedia from "../socialMediaComp/socialMedia"
 
 export default function Nav(props)
@@ -80,7 +81,7 @@ export default function Nav(props)
 
                     </div>
                     <div className="w-full h-full flex flex-col justify-end pb-3">
-                        
+                        <VisitCount/>
                         <SocialMedia/>
                     </div>
             </div>

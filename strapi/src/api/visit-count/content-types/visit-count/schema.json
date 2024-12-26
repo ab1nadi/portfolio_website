@@ -1,0 +1,18 @@
+{
+  "kind": "singleType",
+  "collectionName": "visit_counts",
+  "info": {
+    "singularName": "visit-count",
+    "pluralName": "visit-counts",
+    "displayName": "Visit Count"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "count": {
+      "type": "integer"
+    }
+  }
+}

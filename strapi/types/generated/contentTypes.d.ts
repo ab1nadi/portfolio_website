@@ -524,6 +524,34 @@ export interface ApiTypeWriterWordTypeWriterWord
   };
 }
 
+export interface ApiVisitCountVisitCount extends Struct.SingleTypeSchema {
+  collectionName: 'visit_counts';
+  info: {
+    displayName: 'Visit Count';
+    pluralName: 'visit-counts';
+    singularName: 'visit-count';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    count: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::visit-count.visit-count'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -1038,6 +1066,7 @@ declare module '@strapi/strapi' {
       'api::project.project': ApiProjectProject;
       'api::skill.skill': ApiSkillSkill;
       'api::type-writer-word.type-writer-word': ApiTypeWriterWordTypeWriterWord;
+      'api::visit-count.visit-count': ApiVisitCountVisitCount;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

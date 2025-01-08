@@ -10,13 +10,14 @@ services:
       - PGID=1000
       - TZ=America/Denver
       - URL=randomdomain-url-etc.online
-      - SUBDOMAINS=www,
+      - SUBDOMAINS=
       - VALIDATION=http
     volumes:
       - ./swag/config:/config
     ports:
       - 443:443
-      - 80:80 #optional
+      - 80:80
+
     restart: unless-stopped
 
   strapi:
@@ -36,16 +37,12 @@ services:
       APP_KEYS: ${APP_KEYS}
       NODE_ENV: ${NODE_ENV}
     volumes:
-      - strapi:/opt/app/config
-      - strapi:/opt/app/src
-      - strapi:/opt/package.json
-      - strapi:/opt/yarn.lock
-      - strapi:/opt/app/public/uploads
-      - strapi:/opt/app/.tmp
-      - ./.env:/opt/app/.env
-    command: ${START_COMMAND}
+      - strap:/opt
+      - ./src:/opt/app/src
+
+    user: "1000:1000"
     ports:
       - "1337:1337"
 
 volumes:
-  strapi:  # Define the volume
+  strap:

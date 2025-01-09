@@ -3,6 +3,7 @@ import {
   SidebarHeader,
   SidebarContent,
   SidebarGroup,
+  SidebarFooter,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
@@ -10,7 +11,8 @@ import {
 } from "@/components/ui/sidebar"
 import Rubiks from "./rubiks/rubiks"
 import {RefObject } from "react"
-
+import SocialMedia from "./socialMedia"
+import VisitCount from "./sections/visitCount"
 interface AppSidebarProps 
 {
     buttons: {text:string, ref:RefObject<HTMLElement>}[]
@@ -30,9 +32,9 @@ export function AppSidebar(props:AppSidebarProps) {
             <SidebarGroupContent>
                 <SidebarMenu>
                 {props.buttons.map((item) => (
-                    <SidebarMenuItem key={item.text}>
-                    <SidebarMenuButton asChild>
-                        <div onClick={()=>{
+                    <SidebarMenuItem className="w-full rounded-none" key={item.text}>
+                    <SidebarMenuButton className="w-full rounded-none hover:bg-slate-300 cursor-pointer" asChild>
+                        <div className="text-xl" onClick={()=>{
                             if(item.ref.current != null)
                                 item.ref.current.scrollIntoView({behavior: 'smooth'})
                         }}>
@@ -45,6 +47,11 @@ export function AppSidebar(props:AppSidebarProps) {
             </SidebarGroupContent>
             </SidebarGroup>
         </SidebarContent>
+
+        <SidebarFooter>
+            <VisitCount/>
+            <SocialMedia/>
+        </SidebarFooter>
     </Sidebar>
   )
 }

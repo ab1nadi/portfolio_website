@@ -17,7 +17,7 @@ export default function ContactMe(props:ContactMeProps)
                 </div>
 
                 <div className="w-full flex justify-center gap-6">
-                    <div className="text-white text-2xl">abinadiswapp@gmail.com</div>
+                    <div className="text-2xl">abinadiswapp@gmail.com</div>
                 </div>
 
                 <SocialMedia/>

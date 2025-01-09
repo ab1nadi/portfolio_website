@@ -29,9 +29,9 @@ export default function App() {
                               {text:"Certifications",ref:certifications},
                               {text:"Projects", ref:projects},
                               {text:"Contact Me", ref:contactMe}]}/>
-      <main className='w-full overflow-hidden'>
+      <main className='w-full overflow-hidden bg-gradient-to-r from-slate-200 to-secondary'>
         
-        <div className='fixed'>
+        <div className='fixed w-screen h-screen'>
           <SidebarTrigger/>
         </div>
 

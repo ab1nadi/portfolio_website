@@ -12,7 +12,7 @@ import {
 import Rubiks from "./rubiks/rubiks"
 import {RefObject } from "react"
 import SocialMedia from "./socialMedia"
-import VisitCount from "./sections/visitCount"
+import VisitCount from "./visitCount"
 interface AppSidebarProps 
 {
     buttons: {text:string, ref:RefObject<HTMLElement>}[]
